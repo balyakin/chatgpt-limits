@@ -1,0 +1,9 @@
+refresh_seconds = 300
+
+[[accounts]]
+slug = "personal"
+name = "Personal Pro"
+
+[[accounts]]
+slug = "work"
+name = "Work Pro"
