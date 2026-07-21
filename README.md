@@ -167,7 +167,5 @@ ChatGPT Limits показывает только те Codex-лимиты, кот
 монитор OpenAI Platform Usage и не экран всех модельных лимитов ChatGPT. Приложение не отправляет сообщения моделям,
 не расходует и не сбрасывает лимиты, не хранит историю значений и не работает в фоне как служба.
 
-Подробный контракт находится в [`SPEC.md`](SPEC.md), а принятые инженерные решения — в [`PLAN.md`](PLAN.md).
-
 Полезные первоисточники: [Codex App Server](https://learn.chatgpt.com/docs/app-server) и
 [хранение учётных данных в Codex](https://learn.chatgpt.com/docs/auth#credential-storage).
