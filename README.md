@@ -1,5 +1,10 @@
 # ChatGPT Limits
 
+[![Python][badge-python]][python]
+[![Platforms][badge-platforms]][quick-start]
+[![Codex CLI][badge-codex]][codex]
+[![License: MIT][badge-license]][license]
+
 Пятчасовой и недельный лимиты Codex для всех учётных записей ChatGPT Pro — в одном терминале.
 
 С двумя аккаунтами штатный экран уже неудобен: переключения съедают время, а остатки приходится держать в голове.
@@ -196,3 +201,12 @@ ChatGPT Limits показывает ровно те Codex-лимиты, кото
 
 Для проверки деталей обращайтесь к первоисточникам: [Codex App Server](https://learn.chatgpt.com/docs/app-server) и
 [хранение учётных данных в Codex](https://learn.chatgpt.com/docs/auth#credential-storage).
+
+[badge-python]: https://img.shields.io/badge/python-3.12-blue
+[badge-platforms]: https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue
+[badge-codex]: https://img.shields.io/badge/Codex%20CLI-required-7c3aed
+[badge-license]: https://img.shields.io/badge/license-MIT-green.svg
+[python]: https://docs.python.org/3.12/
+[quick-start]: #быстрый-старт
+[codex]: https://learn.chatgpt.com/docs/codex/cli
+[license]: https://github.com/balyakin/chatgpt-limits/blob/main/LICENSE
