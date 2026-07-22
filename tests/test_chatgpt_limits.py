@@ -701,7 +701,7 @@ def test_rpc_builders_match_wire_contract() -> None:
                 "clientInfo": {
                     "name": "chatgpt-limits",
                     "title": "ChatGPT Limits",
-                    "version": "1.0.0",
+                    "version": "1.1.0",
                 },
             },
         },
@@ -1733,7 +1733,7 @@ def test_format_limit_line_shows_no_data_without_guessing() -> None:
     actual: str = limits.format_limit_line(limits.WEEK_LABEL, window)
 
     # ASSERT
-    assert actual == "  Неделя: нет данных"
+    assert actual == "  Неделя:  нет данных"
     assert "100%" not in actual
 
 
@@ -1787,11 +1787,11 @@ def test_render_screen_matches_full_two_account_snapshot() -> None:
             "",
             "Personal Pro",
             f"  5 часов: [███████████████░░░░░] 75% осталось, сброс {limits.format_datetime(first_reset)}",
-            f"  Неделя: [████████░░░░░░░░░░░░] 42.5% осталось, сброс {limits.format_datetime(second_reset)}",
+            f"  Неделя:  [████████░░░░░░░░░░░░] 42.5% осталось, сброс {limits.format_datetime(second_reset)}",
             "",
             "Work Pro",
             f"  5 часов: [████████████████████] 100% осталось, сброс {limits.format_datetime(third_reset)}",
-            "  Неделя: нет данных",
+            "  Неделя:  нет данных",
             "",
             "Остановка: Ctrl+C",
         ],
@@ -1822,7 +1822,7 @@ def test_render_screen_ignores_unrecognized_durations() -> None:
 
     # ASSERT
     assert "5 часов: нет данных" in screen
-    assert "Неделя: нет данных" in screen
+    assert "Неделя:  нет данных" in screen
     assert "15" not in screen
 
 

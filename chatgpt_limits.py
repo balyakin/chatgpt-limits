@@ -17,10 +17,14 @@ from typing import BinaryIO, Dict, List, Optional, Pattern, Sequence, Set
 
 APP_NAME: str = "chatgpt-limits"
 APP_TITLE: str = "ChatGPT Limits"
-APP_VERSION: str = "1.0.0"
+APP_VERSION: str = "1.1.0"
 SCREEN_TITLE: str = "ChatGPT Pro / Codex limits"
 FIVE_HOUR_LABEL: str = "5 часов"
 WEEK_LABEL: str = "Неделя"
+LIMIT_VALUE_COLUMN: int = max(
+    len(f"  {FIVE_HOUR_LABEL}: "),
+    len(f"  {WEEK_LABEL}: "),
+)
 NO_DATA_TEXT: str = "нет данных"
 UNKNOWN_RESET_TEXT: str = "сброс неизвестен"
 STOP_TEXT: str = "Остановка: Ctrl+C"
@@ -835,8 +839,9 @@ def format_limit_line(
     Returns:
         Fully formatted indented line
     """
+    line_prefix: str = f"  {label}: ".ljust(LIMIT_VALUE_COLUMN)
     if window is None:
-        return f"  {label}: {NO_DATA_TEXT}"
+        return f"{line_prefix}{NO_DATA_TEXT}"
 
     remaining_percent: float = MAX_PERCENT - window.used_percent
     percentage_text: str = format_percentage(remaining_percent)
@@ -849,7 +854,7 @@ def format_limit_line(
         reset_datetime: str = format_datetime(window.resets_at)
         reset_text = f"сброс {reset_datetime}"
 
-    return f"  {label}: [{bar_text}] {percentage_text}% осталось, {reset_text}"
+    return f"{line_prefix}[{bar_text}] {percentage_text}% осталось, {reset_text}"
 
 
 def render_screen(
