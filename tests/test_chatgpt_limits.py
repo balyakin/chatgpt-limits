@@ -482,10 +482,11 @@ def test_prepare_account_home_creates_exact_protected_tree(
     # ASSERT
     assert actual_entries == expected_entries
     assert config_path.read_text(encoding="utf-8") == limits.CODEX_CONFIG_CONTENT
-    assert stat.S_IMODE(state_root.stat().st_mode) == limits.DIRECTORY_MODE
-    assert stat.S_IMODE(accounts_root.stat().st_mode) == limits.DIRECTORY_MODE
-    assert stat.S_IMODE(account.codex_home.stat().st_mode) == limits.DIRECTORY_MODE
-    assert stat.S_IMODE(config_path.stat().st_mode) == limits.FILE_MODE
+    if limits.sys.platform != limits.WINDOWS_PLATFORM:
+        assert stat.S_IMODE(state_root.stat().st_mode) == limits.DIRECTORY_MODE
+        assert stat.S_IMODE(accounts_root.stat().st_mode) == limits.DIRECTORY_MODE
+        assert stat.S_IMODE(account.codex_home.stat().st_mode) == limits.DIRECTORY_MODE
+        assert stat.S_IMODE(config_path.stat().st_mode) == limits.FILE_MODE
 
 
 def test_prepare_account_home_preserves_existing_credentials(
@@ -508,7 +509,8 @@ def test_prepare_account_home_preserves_existing_credentials(
 
     # ASSERT
     assert auth_path.read_bytes() == credential_bytes
-    assert stat.S_IMODE(auth_path.stat().st_mode) == limits.FILE_MODE
+    if limits.sys.platform != limits.WINDOWS_PLATFORM:
+        assert stat.S_IMODE(auth_path.stat().st_mode) == limits.FILE_MODE
 
 
 def test_prepare_account_home_chains_storage_error(
@@ -590,7 +592,8 @@ def test_login_account_uses_exact_command_and_inherited_stdio(
     environment: Dict[str, str] = captured_kwargs[0]["env"]
     assert environment[limits.CODEX_HOME_ENV_NAME] == str(account.codex_home)
     auth_path: Path = account.codex_home / limits.AUTH_FILE_NAME
-    assert stat.S_IMODE(auth_path.stat().st_mode) == limits.FILE_MODE
+    if limits.sys.platform != limits.WINDOWS_PLATFORM:
+        assert stat.S_IMODE(auth_path.stat().st_mode) == limits.FILE_MODE
 
 
 def test_login_account_rejects_nonzero_exit(
@@ -2317,8 +2320,9 @@ def test_configure_logging_creates_one_protected_error_handler(
     limits.configure_logging()
 
     # ASSERT
-    assert stat.S_IMODE(state_root.stat().st_mode) == limits.DIRECTORY_MODE
-    assert stat.S_IMODE(limits.LOG_PATH.stat().st_mode) == limits.FILE_MODE
+    if limits.sys.platform != limits.WINDOWS_PLATFORM:
+        assert stat.S_IMODE(state_root.stat().st_mode) == limits.DIRECTORY_MODE
+        assert stat.S_IMODE(limits.LOG_PATH.stat().st_mode) == limits.FILE_MODE
     assert len(limits.logger.handlers) == 1
     handler: logging.Handler = limits.logger.handlers[0]
     assert isinstance(handler, logging.FileHandler)
@@ -2381,6 +2385,23 @@ def test_ensure_codex_available_rejects_missing_executable(monkeypatch: pytest.M
 
     # ASSERT
     assert str(caught.value) == "Codex CLI is not available in PATH"
+
+
+def test_get_codex_command_resolves_windows_launcher(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify Windows uses the executable path resolved through PATHEXT"""
+
+    # ARRANGE
+    codex_path: str = r"C:\Users\tester\AppData\Roaming\npm\codex.CMD"
+    which: Mock = Mock(return_value=codex_path)
+    monkeypatch.setattr(limits.sys, "platform", limits.WINDOWS_PLATFORM)
+    monkeypatch.setattr(limits.shutil, "which", which)
+
+    # ACT
+    actual: str = limits.get_codex_command()
+
+    # ASSERT
+    assert actual == codex_path
+    which.assert_called_once_with(limits.CODEX_COMMAND)
 
 
 def test_get_account_by_slug_returns_exact_match(tmp_path: Path) -> None:
@@ -2734,6 +2755,7 @@ def test_project_contains_only_allowed_implementation_artifacts() -> None:
         for path in project_root.rglob("*")
         if path.is_file()
         and path.suffix in {".py", ".toml"}
+        and path.relative_to(project_root) != limits.DEFAULT_CONFIG_PATH
         and "__pycache__" not in path.parts
         and ".pytest_cache" not in path.parts
     }

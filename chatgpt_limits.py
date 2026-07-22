@@ -27,6 +27,7 @@ STOP_TEXT: str = "Остановка: Ctrl+C"
 CODEX_COMMAND: str = "codex"
 APP_SERVER_COMMAND: str = "app-server"
 LOGIN_COMMAND: str = "login"
+WINDOWS_PLATFORM: str = "win32"
 CODEX_HOME_ENV_NAME: str = "CODEX_HOME"
 CONFIG_OPTION: str = "--config"
 LOGIN_OPTION: str = "--login"
@@ -324,7 +325,7 @@ async def login_account(account: AccountConfig) -> None:
 
     try:
         process: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
-            CODEX_COMMAND,
+            get_codex_command(),
             LOGIN_COMMAND,
             env=environment,
         )
@@ -541,7 +542,7 @@ async def read_account_limits(account: AccountConfig) -> Dict[str, object]:
     with stderr_file:
         try:
             process: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
-                CODEX_COMMAND,
+                get_codex_command(),
                 APP_SERVER_COMMAND,
                 stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,
@@ -980,6 +981,21 @@ def ensure_codex_available() -> None:
     codex_path: Optional[str] = shutil.which(CODEX_COMMAND)
     if codex_path is None:
         raise ConfigError("Codex CLI is not available in PATH")
+
+
+def get_codex_command() -> str:
+    """Get the platform-compatible Codex command
+
+    Returns:
+        Resolved Windows launcher or the portable command name
+    """
+    if sys.platform != WINDOWS_PLATFORM:
+        return CODEX_COMMAND
+
+    codex_path: Optional[str] = shutil.which(CODEX_COMMAND)
+    if codex_path is None:
+        return CODEX_COMMAND
+    return codex_path
 
 
 def get_account_by_slug(
