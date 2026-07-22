@@ -58,6 +58,9 @@ FIVE_HOUR_MINUTES: int = 300
 WEEK_MINUTES: int = 10080
 MIN_PERCENT: float = 0.0
 MAX_PERCENT: float = 100.0
+PROGRESS_BAR_WIDTH: int = 20
+PROGRESS_FILLED_CHAR: str = "█"
+PROGRESS_EMPTY_CHAR: str = "░"
 SECONDS_PER_MINUTE: int = 60
 INTERRUPTED_EXIT_CODE: int = 130
 SUCCESS_EXIT_CODE: int = 0
@@ -837,13 +840,16 @@ def format_limit_line(
 
     remaining_percent: float = MAX_PERCENT - window.used_percent
     percentage_text: str = format_percentage(remaining_percent)
+    bar_filled_count: int = round(remaining_percent * PROGRESS_BAR_WIDTH / MAX_PERCENT)
+    bar_empty_count: int = PROGRESS_BAR_WIDTH - bar_filled_count
+    bar_text: str = PROGRESS_FILLED_CHAR * bar_filled_count + PROGRESS_EMPTY_CHAR * bar_empty_count
     if window.resets_at is None:
         reset_text: str = UNKNOWN_RESET_TEXT
     else:
         reset_datetime: str = format_datetime(window.resets_at)
         reset_text = f"сброс {reset_datetime}"
 
-    return f"  {label}: {percentage_text}% осталось, {reset_text}"
+    return f"  {label}: [{bar_text}] {percentage_text}% осталось, {reset_text}"
 
 
 def render_screen(

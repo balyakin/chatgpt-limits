@@ -1714,7 +1714,7 @@ def test_format_limit_line_shows_remaining_and_unknown_reset() -> None:
         used_percent=25.0,
         resets_at=None,
     )
-    expected: str = "  5 часов: 75% осталось, сброс неизвестен"
+    expected: str = "  5 часов: [███████████████░░░░░] 75% осталось, сброс неизвестен"
 
     # ACT
     actual: str = limits.format_limit_line(limits.FIVE_HOUR_LABEL, window)
@@ -1744,7 +1744,7 @@ def test_format_limit_line_formats_reset_in_local_timezone() -> None:
     reset_time: datetime = datetime(2026, 7, 21, 11, 20, tzinfo=timezone.utc)
     window: LimitWindow = LimitWindow(300, 25.0, reset_time)
     local_text: str = reset_time.astimezone().strftime(limits.DATETIME_FORMAT)
-    expected: str = f"  5 часов: 75% осталось, сброс {local_text}"
+    expected: str = f"  5 часов: [███████████████░░░░░] 75% осталось, сброс {local_text}"
 
     # ACT
     actual: str = limits.format_limit_line(limits.FIVE_HOUR_LABEL, window)
@@ -1786,11 +1786,11 @@ def test_render_screen_matches_full_two_account_snapshot() -> None:
             "Следующее обновление: примерно через 5 мин",
             "",
             "Personal Pro",
-            f"  5 часов: 75% осталось, сброс {limits.format_datetime(first_reset)}",
-            f"  Неделя: 42.5% осталось, сброс {limits.format_datetime(second_reset)}",
+            f"  5 часов: [███████████████░░░░░] 75% осталось, сброс {limits.format_datetime(first_reset)}",
+            f"  Неделя: [████████░░░░░░░░░░░░] 42.5% осталось, сброс {limits.format_datetime(second_reset)}",
             "",
             "Work Pro",
-            f"  5 часов: 100% осталось, сброс {limits.format_datetime(third_reset)}",
+            f"  5 часов: [████████████████████] 100% осталось, сброс {limits.format_datetime(third_reset)}",
             "  Неделя: нет данных",
             "",
             "Остановка: Ctrl+C",
@@ -2302,7 +2302,7 @@ def test_run_monitor_does_not_reuse_stale_success_after_error(
 
     # ASSERT
     assert len(screens) == 2
-    assert "5 часов: 75% осталось" in screens[0]
+    assert "5 часов: [███████████████░░░░░] 75% осталось" in screens[0]
     assert "Ошибка: new failure" in screens[1]
     assert "5 часов:" not in screens[1]
 
